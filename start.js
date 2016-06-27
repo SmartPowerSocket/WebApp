@@ -38,5 +38,8 @@ if (cluster.isMaster) {
     });
   }
 } else {
-  require('./node_modules/webpack-dev-server/bin/webpack-dev-server.js');
+  // For dev
+  // require('./node_modules/webpack-dev-server/bin/webpack-dev-server.js');
+  // For prod
+  require('./app.js');
 }

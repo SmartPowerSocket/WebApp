@@ -8,7 +8,7 @@
     "dev": "node ./node_modules/webpack-dev-server/bin/webpack-dev-server.js",
     "test": "mocha --compilers js:babel-core/register --require ./test/test_helper.js --recursive ./test",
     "test:watch": "npm run test -- --watch",
-    "start": "node start.js"
+    "start": "node --use_strict start.js"
   },
   "author": "",
   "license": "ISC",
