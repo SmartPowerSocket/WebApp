@@ -1,3 +1,6 @@
+const nodePort = process.env.NODE_PORT || 3000;
+const nodeIp = process.env.NODE_IP || 'localhost';
+
 module.exports = {
   entry: [
     './src/index.js'
@@ -18,6 +21,8 @@ module.exports = {
   },
   devServer: {
     historyApiFallback: true,
-    contentBase: './'
+    contentBase: './',
+    host: nodeIp,
+    port: nodePort
   }
 };
