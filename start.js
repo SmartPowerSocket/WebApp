@@ -1,3 +1,5 @@
+"use strict";
+
 const cluster = require('cluster'),
       stopSignals = [
         'SIGHUP', 'SIGINT', 'SIGQUIT', 'SIGILL', 'SIGTRAP', 'SIGABRT',
@@ -36,5 +38,5 @@ if (cluster.isMaster) {
     });
   }
 } else {
-  require('./app.js');
+  require('./node_modules/webpack-dev-server/bin/webpack-dev-server.js');
 }
