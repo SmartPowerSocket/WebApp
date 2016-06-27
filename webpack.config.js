@@ -1,5 +1,3 @@
-const env = process.env;
-
 module.exports = {
   entry: [
     './src/index.js'
@@ -20,8 +18,6 @@ module.exports = {
   },
   devServer: {
     historyApiFallback: true,
-    contentBase: './',
-    host: env.NODE_IP || 'localhost',
-    port: env.NODE_PORT || 3000
+    contentBase: './'
   }
 };
