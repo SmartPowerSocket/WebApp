@@ -2,7 +2,7 @@ import axios from 'axios';
 import { browserHistory } from 'react-router';
 import { ROOT_URL,
         AUTH_USER,
-        UNAUTH_USER,
+        UNAUTH_USER, 
         AUTH_ERROR,
         REGISTRATION_ERROR,
         FETCH_DEVICES,
