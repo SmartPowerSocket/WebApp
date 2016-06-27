@@ -9,3 +9,9 @@ https://github.com/danielmapar/NodeExpressJWTAuth
 	> npm install
 	> npm start
 ```
+
+###How to generate a production build###
+```
+	> npm install webpack -g
+	> webpack --progress -p
+```
