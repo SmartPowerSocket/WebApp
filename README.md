@@ -14,4 +14,5 @@ https://github.com/danielmapar/NodeExpressJWTAuth
 ```
 	> npm install webpack -g
 	> webpack --progress -p
+	> npm run build-production
 ```
