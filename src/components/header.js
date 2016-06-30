@@ -27,7 +27,13 @@ class Header extends Component {
     return (
       <nav className="navbar navbar-inverse navbar-fixed-top" role="navigation">
           <div className="navbar-header">
-              <Link to="/devices" className="navbar-brand"><img src="images/logo.png" width="270px" height="30px" alt="Smart Power Socket logo"></img></Link>
+              <button type="button" className="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+                  <span className="sr-only">Toggle navigation</span>
+                  <span className="icon-bar"></span>
+                  <span className="icon-bar"></span>
+                  <span className="icon-bar"></span>
+              </button>
+              <Link to="/devices" className="navbar-brand"><img src="images/logo.png" width="250px" height="30px" alt="Smart Power Socket logo"></img></Link>
           </div>
           {this.renderBasedOnAuthentication()}
       </nav>
