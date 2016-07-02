@@ -19,6 +19,14 @@ let deviceId = null;
 
 class Device extends Component {
 
+  constructor(props) {
+    super(props);
+    this.state = {
+      photonName: "",
+      editDeviceName: false
+    };
+  }
+
   componentWillMount() {
     deviceId = getParameterByName('id');
     this.props.getDeviceDetails(deviceId);
@@ -30,12 +38,33 @@ class Device extends Component {
     }, 10000);
   }
 
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.device && nextProps.device.photonName && this.state.photonName === "") {
+      this.setState({
+        photonName: nextProps.device.photonName
+      });
+    }
+  }
+
   componentWillUnmount() {
     TimerMixin.clearInterval(deviceDataInterval);
   }
 
   changeDeviceStatus(status) {
-    this.props.changeDeviceStatus(deviceId, status, this.props.device);
+    this.props.changeDeviceStatus(deviceId, status);
+  }
+
+  editDeviceName(status) {
+    this.setState({editDeviceName: status});
+  }
+
+  changeDeviceName() {
+    let currentScope = this;
+    this.props.changeDeviceName(deviceId, this.state.photonName, currentScope);
+  }
+
+  onInputChange(photonName) {
+    this.setState({photonName: photonName});
   }
 
   renderDeleteDeviceModal(device) {
@@ -79,7 +108,16 @@ class Device extends Component {
 
     if (device) {
       return(<div>
-        <span>Name: </span> <b> {device.photonName} </b> <br /><br />
+
+        <span>Name: </span> 
+        {this.state.editDeviceName === false ? 
+          <b>{this.state.photonName}</b> 
+        :
+          <span>
+            <input type="text" onChange={event => this.onInputChange(event.target.value)} value={this.state.photonName} id="deviceName" />
+          </span>
+        }
+        <br /><br />
         <span>Status: </span>{device.state.status && device.state.status == "Active" ?
           <i className="fa fa-bolt" style={{fontSize: '20px', color: 'orange'}}></i> :
           <i className="fa fa-bolt" style={{fontSize: '20px', color: 'black'}}></i> } {device.state.status} <br /><br />
@@ -87,6 +125,16 @@ class Device extends Component {
         <span>Device Id: </span>{device.photonId} <br /><br />
         <span>Claim Date: </span>{device.claimDate} <br /><br />
 
+        {this.state.editDeviceName === false ? 
+          <button type="button" onClick={() => this.editDeviceName(true)} className="btn btn-primary pull-left">Edit Device Name</button>
+          :
+          <span>
+            <button type="button" onClick={() => this.changeDeviceName()} className="btn btn-primary pull-left" style={{marginRight: '10px'}}>Save</button>
+            <button type="button" onClick={() => this.editDeviceName(false)} className="btn btn-default pull-left">Cancel</button>
+          </span>
+        }
+        <br /><br /><br />
+        
         {device.state.status && device.state.status === 'Active' ?
           <button type="button" onClick={() => this.changeDeviceStatus('Inactive')} className="btn btn-warning pull-left">{"Turn Off Device"}</button>
           :

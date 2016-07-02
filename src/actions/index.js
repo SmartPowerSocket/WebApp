@@ -10,8 +10,8 @@ import { ROOT_URL,
         FETCH_DEVICE_DETAILS_FAILED,
         FETCH_DEVICE_DATA,
         FETCH_DEVICE_DATA_FAILED,
-        CHANGED_DEVICE_STATUS,
-        CHANGE_DEVICE_STATUS_FAILED } from './types';
+        UPDATE_DEVICE_DATA,
+        UPDATE_DEVICE_DATA_FAILED } from './types';
 
 export function signoutUser() {
   localStorage.removeItem('token');
@@ -134,7 +134,7 @@ export function getDeviceMostRecentData(deviceId) {
 
 }
 
-export function changeDeviceStatus(deviceId, status, device) {
+export function changeDeviceStatus(deviceId, status) {
 
   return function(dispatch) {
     axios.post(`${ROOT_URL}/changeDeviceStatus`, { deviceId: deviceId, status: status }, {
@@ -145,7 +145,7 @@ export function changeDeviceStatus(deviceId, status, device) {
           browserHistory.push('/devices');
         } else {
           dispatch({
-            type: CHANGED_DEVICE_STATUS,
+            type: UPDATE_DEVICE_DATA,
             payload: response.data.device
           });
         }
@@ -153,7 +153,31 @@ export function changeDeviceStatus(deviceId, status, device) {
     }).catch(function(response) {
 
       dispatch({
-        type: CHANGE_DEVICE_STATUS_FAILED,
+        type: UPDATE_DEVICE_DATA_FAILED,
+        payload: response.data.error
+      })
+    });
+  };
+}
+
+export function changeDeviceName(deviceId, deviceName, currentScope) {
+
+  return function(dispatch) {
+    axios.post(`${ROOT_URL}/changeDeviceName`, { deviceId: deviceId, deviceName: deviceName }, {
+      headers: { authorization: localStorage.getItem('token') }
+    }).then(response => {
+
+      currentScope.setState({editDeviceName: false});
+
+      dispatch({
+        type: UPDATE_DEVICE_DATA,
+        payload: response.data.device
+      });
+
+    }).catch(function(response) {
+
+      dispatch({
+        type: UPDATE_DEVICE_DATA_FAILED,
         payload: response.data.error
       })
     });

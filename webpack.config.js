@@ -1,4 +1,4 @@
-const nodePort = process.env.NODE_PORT || 3000;
+const nodePort = process.env.NODE_PORT || 3001;
 const nodeIp = process.env.NODE_IP || 'localhost';
 
 module.exports = {

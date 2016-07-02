@@ -11,7 +11,7 @@ export const FETCH_DEVICE_DETAILS_FAILED = 'fetch_device_details_failed';
 export const FETCH_DEVICE_DATA = 'fetch_device_data';
 export const FETCH_DEVICE_DATA_FAILED = 'fetch_device_data_failed';
 
-export const CHANGED_DEVICE_STATUS = 'changed_device_status';
-export const CHANGE_DEVICE_STATUS_FAILED = 'change_device_status_failed';
+export const UPDATE_DEVICE_DATA = 'update_device_data';
+export const UPDATE_DEVICE_DATA_FAILED = 'update_device_data_failed';
 
-export const ROOT_URL = 'http://api.smartpowersocket.xyz';
+export const ROOT_URL = 'https://d76a6af1.ngrok.io';
