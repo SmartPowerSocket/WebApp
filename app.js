@@ -26,6 +26,8 @@ let server = http.createServer(function (req, res) {
             res.writeHead(404);
             res.end('Not found');
           } else {
+            let ext = 'html';
+            res.setHeader('Content-Type', contentTypes[ext]);
             res.setHeader('Cache-Control', 'no-cache, no-store');
             res.end(data);
           }
