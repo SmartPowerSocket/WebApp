@@ -21,8 +21,15 @@ let server = http.createServer(function (req, res) {
     url = trump(url, "?");
     fs.readFile('.' + url, function (err, data) {
       if (err) {
-        res.writeHead(404);
-        res.end('Not found');
+        fs.readFile('./index.html', function (err, data) {
+          if (err) {
+            res.writeHead(404);
+            res.end('Not found');
+          } else {
+            res.setHeader('Cache-Control', 'no-cache, no-store');
+            res.end(data);
+          }
+        });
       } else {
         let ext = path.extname(url).slice(1);
         if (contentTypes[ext]) {
