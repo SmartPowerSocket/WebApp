@@ -13,6 +13,7 @@ import Signup from './components/auth/signup';
 import Devices from './components/devices';
 import Device from './components/device';
 import DownloadApp from './components/downloadapp';
+import NotFound from './components/notfound';
 
 import RequireAuth from './components/auth/require_auth';
 
@@ -41,6 +42,8 @@ ReactDOM.render(
           <Route path="devices" component={RequireAuth(Devices)} />
           <Route path="device" component={RequireAuth(Device)} />
           <Route path="download" component={RequireAuth(DownloadApp)} />
+
+          <Route path="*" component={NotFound} />
         </Route>
     </Router>
   </Provider>
