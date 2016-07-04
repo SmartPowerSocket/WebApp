@@ -12,6 +12,7 @@ import Signout from './components/auth/signout';
 import Signup from './components/auth/signup';
 import Devices from './components/devices';
 import Device from './components/device';
+import DownloadApp from './components/downloadapp';
 
 import RequireAuth from './components/auth/require_auth';
 
@@ -39,6 +40,7 @@ ReactDOM.render(
           <Route path="signup" component={Signup} />
           <Route path="devices" component={RequireAuth(Devices)} />
           <Route path="device" component={RequireAuth(Device)} />
+          <Route path="download" component={RequireAuth(DownloadApp)} />
         </Route>
     </Router>
   </Provider>
