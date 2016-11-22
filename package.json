@@ -12,7 +12,7 @@
     "build-production": "webpack -p --define process.env.NODE_ENV='\"production\"' --progress --colors"
   },
   "author": "",
-  "license": "ISC",
+  "license": "ISC", 
   "devDependencies": {
     "babel-core": "^6.2.1",
     "babel-loader": "^6.2.0",
