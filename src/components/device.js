@@ -312,7 +312,7 @@ class Device extends Component {
         data: {
           names: {
             current: 'Current',
-            tension: 'Tension',
+            tension: 'Voltage',
             apparentPower: 'Apparent Power'
           }
         }
