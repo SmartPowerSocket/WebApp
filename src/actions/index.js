@@ -136,7 +136,7 @@ export function getDeviceMostRecentData(deviceId, socketNum) {
 
 }
 
-export function generateReport(deviceId, socketNum, startDate, endDate, kVAReaisHour) {
+export function generateReport(deviceId, socketNum, startDate, endDate, kWReaisHour) {
 
   return function(dispatch) {
     axios.post(`${ROOT_URL}/generateReport`, { 
@@ -144,7 +144,7 @@ export function generateReport(deviceId, socketNum, startDate, endDate, kVAReais
       socketNum: socketNum,
       startDate: startDate,
       endDate: endDate,
-      kVAReaisHour: kVAReaisHour
+      kWReaisHour: kWReaisHour
     }, {
       headers: { authorization: localStorage.getItem('token') }
     }).then(response => {

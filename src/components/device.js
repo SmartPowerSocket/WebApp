@@ -27,13 +27,13 @@ class Device extends Component {
       editDeviceNameSocket1: false,
       reportStartDateSocket1: null,
       reportEndDateSocket1: null,
-      kVAReaisHourSocket1: 0,
+      kWReaisHourSocket1: 0,
 
       deviceNameSocket2: "",
       editDeviceNameSocket2: false,
       reportStartDateSocket2: null,
       reportEndDateSocket2: null,
-      kVAReaisHourSocket2: 0,
+      kWReaisHourSocket2: 0,
     };
   }
 
@@ -114,11 +114,11 @@ class Device extends Component {
     }
   }
 
-  onKVAReaisHourChange(kVAReaisHour, socketNum) {
+  onkWReaisHourChange(kWReaisHour, socketNum) {
     if (socketNum === 1) {
-      this.setState({kVAReaisHourSocket1: kVAReaisHour});
+      this.setState({kWReaisHourSocket1: kWReaisHour});
     } else if (socketNum === 2) {
-      this.setState({kVAReaisHourSocket2: kVAReaisHour});
+      this.setState({kWReaisHourSocket2: kWReaisHour});
     }
   }
 
@@ -146,8 +146,8 @@ class Device extends Component {
     }
   }
 
-  generateReport(socketNum, startDate, endDate, kVAReaisHour) {
-    this.props.generateReport(deviceId, socketNum, startDate, endDate, kVAReaisHour);
+  generateReport(socketNum, startDate, endDate, kWReaisHour) {
+    this.props.generateReport(deviceId, socketNum, startDate, endDate, kWReaisHour);
   }
 
   renderDeleteDeviceModal(socket, socketNum) {
@@ -173,7 +173,7 @@ class Device extends Component {
         </div>);
   }
 
-  renderGenerateReportModal(socket, socketNum, startDate, endDate, report, kVAReaisHour) {
+  renderGenerateReportModal(socket, socketNum, startDate, endDate, report, kWReaisHour) {
     return(
         <div className="modal fade" id={"reportModal"+socketNum} role="dialog">
           <div className="modal-dialog">
@@ -203,7 +203,7 @@ class Device extends Component {
                 <br /><br />
 
                 <span>
-                  kVA/h price (R$): <input type="number" onChange={event => this.onKVAReaisHourChange(event.target.value, socketNum)} value={kVAReaisHour}/>
+                  kW/h price (R$): <input type="number" onChange={event => this.onkWReaisHourChange(event.target.value, socketNum)} value={kWReaisHour}/>
                 </span>
 
                 <br />
@@ -211,7 +211,7 @@ class Device extends Component {
                 {report ? 
                   <div>
                     <hr />
-                    <p>Consumption in kVA: {report.data.consumptionkVA}</p> 
+                    <p>Consumption in kW: {report.data.consumptionkW}</p> 
                     <p>Consumption in Reais: {report.data.consumptionReais}</p> 
                   </div>
                  : <span></span>}
@@ -219,7 +219,7 @@ class Device extends Component {
               </div>
 
               <div className="modal-footer">
-                <button type="button" onClick={() => this.generateReport(socketNum, startDate, endDate, kVAReaisHour)} className="btn btn-success pull-left">Generate report</button>
+                <button type="button" onClick={() => this.generateReport(socketNum, startDate, endDate, kWReaisHour)} className="btn btn-success pull-left">Generate report</button>
                 <button type="button" className="btn btn-default" data-dismiss="modal">Close</button>
               </div>
             </div>
@@ -228,7 +228,7 @@ class Device extends Component {
         </div>);
   }
 
-  renderSocket(socket, socketNum, editDeviceNameSocket, deviceNameSocket, deviceMostRecentData, pastData, reportStartDate, reportEndDate, report, kVAReaisHour, chart) {
+  renderSocket(socket, socketNum, editDeviceNameSocket, deviceNameSocket, deviceMostRecentData, pastData, reportStartDate, reportEndDate, report, kWReaisHour, chart) {
 
     if (socket.state.status === 'Deleted') {
       return (<span></span>);
@@ -282,7 +282,7 @@ class Device extends Component {
 
       {this.renderDeleteDeviceModal(socket, socketNum)}
 
-      {this.renderGenerateReportModal(socket, socketNum, reportStartDate, reportEndDate, report, kVAReaisHour)}
+      {this.renderGenerateReportModal(socket, socketNum, reportStartDate, reportEndDate, report, kWReaisHour)}
 
     </div>);
 
@@ -336,7 +336,7 @@ class Device extends Component {
           this.state.reportStartDateSocket1,
           this.state.reportEndDateSocket1,
           reportSocket1,
-          this.state.kVAReaisHourSocket1,
+          this.state.kWReaisHourSocket1,
           chart
           )}
 
@@ -352,7 +352,7 @@ class Device extends Component {
           this.state.reportStartDateSocket2,
           this.state.reportEndDateSocket2,
           reportSocket2,
-          this.state.kVAReaisHourSocket2,
+          this.state.kWReaisHourSocket2,
           chart
           )}
 
