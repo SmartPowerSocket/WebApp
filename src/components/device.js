@@ -206,9 +206,16 @@ class Device extends Component {
                   kVA/h price (R$): <input type="number" onChange={event => this.onKVAReaisHourChange(event.target.value, socketNum)} value={kVAReaisHour}/>
                 </span>
 
-                <br /><br />
-              
-                {report ? 'OK' : 'NOP'}
+                <br />
+                
+                {report ? 
+                  <div>
+                    <hr />
+                    <p>Consumption in kVA: {report.data.consumptionkVA}</p> 
+                    <p>Consumption in Reais: {report.data.consumptionReais}</p> 
+                  </div>
+                 : <span></span>}
+                 
               </div>
 
               <div className="modal-footer">
