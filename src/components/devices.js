@@ -18,7 +18,8 @@ class Devices extends Component {
         <table className="table table-bordered table-hover table-striped">
           <thead>
             <tr>
-              <th>Status</th>
+              <th>Status Socket 1</th>
+              <th>Status Socket 2</th>
               <th>Internal Id</th>
               <th>Name</th>
               <th>Device Id</th>
@@ -28,11 +29,16 @@ class Devices extends Component {
           <tbody>
           {devices.map(function(device) {
             return (<tr key={device._id}>
-              <td>{device.state.status && device.state.status == "Active" ?
+              <td>{device.socket1.state.status && device.socket1.state.status == "Active" ?
                 <i className="fa fa-bolt" style={{fontSize: '20px', color: 'orange'}}></i> :
-                <i className="fa fa-bolt" style={{fontSize: '20px', color: 'black'}}></i> } {device.state.status}</td>
+                <i className="fa fa-bolt" style={{fontSize: '20px', color: 'black'}}></i> } {device.socket1.state.status}</td>
+
+              <td>{device.socket2.state.status && device.socket2.state.status == "Active" ?
+                <i className="fa fa-bolt" style={{fontSize: '20px', color: 'orange'}}></i> :
+                <i className="fa fa-bolt" style={{fontSize: '20px', color: 'black'}}></i> } {device.socket2.state.status}</td>
+
               <td><Link to={`/device?id=${device._id}`}>{device._id}</Link></td>
-              <td>{device.photonName}</td>
+              <td>{device.socket1.name} and {device.socket2.name}</td>
               <td>{device.photonId}</td>
               <td>{device.claimDate}</td>
             </tr>);

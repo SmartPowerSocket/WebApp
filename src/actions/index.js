@@ -11,7 +11,9 @@ import { ROOT_URL,
         FETCH_DEVICE_DATA,
         FETCH_DEVICE_DATA_FAILED,
         UPDATE_DEVICE_DATA,
-        UPDATE_DEVICE_DATA_FAILED } from './types';
+        UPDATE_DEVICE_DATA_FAILED,
+        REPORT_DATA,
+        REPORT_DATA_FAILED } from './types';
 
 export function signoutUser() {
   localStorage.removeItem('token');
@@ -114,10 +116,10 @@ export function getDeviceDetails(deviceId) {
 
 }
 
-export function getDeviceMostRecentData(deviceId) {
+export function getDeviceMostRecentData(deviceId, socketNum) {
 
   return function(dispatch) {
-    axios.get(`${ROOT_URL}/deviceMostRecentData?id=${deviceId}`, {
+    axios.get(`${ROOT_URL}/deviceMostRecentData?deviceId=${deviceId}&socketNum=${socketNum}`, {
       headers: { authorization: localStorage.getItem('token') },
     }).then(response => {
         dispatch({
@@ -134,14 +136,46 @@ export function getDeviceMostRecentData(deviceId) {
 
 }
 
-export function changeDeviceStatus(deviceId, status) {
+export function generateReport(deviceId, socketNum, startDate, endDate, kVAReaisHour) {
 
   return function(dispatch) {
-    axios.post(`${ROOT_URL}/changeDeviceStatus`, { deviceId: deviceId, status: status }, {
+    axios.post(`${ROOT_URL}/generateReport`, { 
+      deviceId: deviceId, 
+      socketNum: socketNum,
+      startDate: startDate,
+      endDate: endDate,
+      kVAReaisHour: kVAReaisHour
+    }, {
       headers: { authorization: localStorage.getItem('token') }
     }).then(response => {
 
-        if (status === 'Deleted') {
+      dispatch({
+        type: REPORT_DATA,
+        payload: response.data.report
+      });
+
+    }).catch(function(response) {
+
+      dispatch({
+        type: REPORT_DATA_FAILED,
+        payload: response.data.error
+      })
+    });
+  };
+}
+
+export function changeDeviceStatus(deviceId, socketNum, status) {
+
+  return function(dispatch) {
+    axios.post(`${ROOT_URL}/changeDeviceStatus`, { 
+      deviceId: deviceId, 
+      status: status,
+      socketNum: socketNum
+    }, {
+      headers: { authorization: localStorage.getItem('token') }
+    }).then(response => {
+
+        if (response.data.deviceRemoved) {
           browserHistory.push('/devices');
         } else {
           dispatch({
@@ -160,14 +194,22 @@ export function changeDeviceStatus(deviceId, status) {
   };
 }
 
-export function changeDeviceName(deviceId, deviceName, currentScope) {
+export function changeDeviceName(deviceId, deviceName, socketNum, currentScope) {
 
   return function(dispatch) {
-    axios.post(`${ROOT_URL}/changeDeviceName`, { deviceId: deviceId, deviceName: deviceName }, {
+    axios.post(`${ROOT_URL}/changeDeviceName`, { 
+      deviceId: deviceId, 
+      deviceName: deviceName,
+      socketNum: socketNum
+    }, {
       headers: { authorization: localStorage.getItem('token') }
     }).then(response => {
 
-      currentScope.setState({editDeviceName: false});
+      if (socketNum === 1) {
+        currentScope.setState({editDeviceNameSocket1: false});
+      } else if (socketNum === 2) {
+        currentScope.setState({editDeviceNameSocket2: false});
+      }
 
       dispatch({
         type: UPDATE_DEVICE_DATA,

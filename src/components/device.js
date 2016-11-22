@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import * as actions from '../actions';
 import RTChart from 'react-rt-chart';
 import TimerMixin from 'react-timer-mixin';
+import DatePicker from 'react-datepicker';
 
 function getParameterByName(name, url) {
     if (!url) url = window.location.href;
@@ -22,8 +23,17 @@ class Device extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      photonName: "",
-      editDeviceName: false
+      deviceNameSocket1: "",
+      editDeviceNameSocket1: false,
+      reportStartDateSocket1: null,
+      reportEndDateSocket1: null,
+      kVAReaisHourSocket1: 0,
+
+      deviceNameSocket2: "",
+      editDeviceNameSocket2: false,
+      reportStartDateSocket2: null,
+      reportEndDateSocket2: null,
+      kVAReaisHourSocket2: 0,
     };
   }
 
@@ -31,17 +41,42 @@ class Device extends Component {
     deviceId = getParameterByName('id');
     this.props.getDeviceDetails(deviceId);
     deviceDataInterval = TimerMixin.setInterval(() => {
-      console.log("reading");
-      if (this.props.device && this.props.device.state.status === "Active") {
-        this.props.getDeviceMostRecentData(deviceId);
+      console.log("Reading...");
+      if (this.props.device) {
+        if (this.props.device.socket1 && 
+            this.props.device.socket1.state && 
+            this.props.device.socket1.state.status === "Active") {
+
+          this.props.getDeviceMostRecentData(deviceId, 1);
+        }
+
+        if (this.props.device.socket2 && 
+            this.props.device.socket2.state && 
+            this.props.device.socket2.state.status === "Active") {
+
+          this.props.getDeviceMostRecentData(deviceId, 2);
+        }
       }
+
     }, 10000);
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.device && nextProps.device.photonName && this.state.photonName === "") {
+    if (nextProps.device && 
+        nextProps.device.socket1 && 
+        nextProps.device.socket1.name && 
+        this.state.deviceNameSocket1 === "") {
       this.setState({
-        photonName: nextProps.device.photonName
+        deviceNameSocket1: nextProps.device.socket1.name
+      });
+    }
+
+    if (nextProps.device && 
+        nextProps.device.socket2 && 
+        nextProps.device.socket2.name && 
+        this.state.deviceNameSocket2 === "") {
+      this.setState({
+        deviceNameSocket2: nextProps.device.socket2.name
       });
     }
   }
@@ -50,38 +85,86 @@ class Device extends Component {
     TimerMixin.clearInterval(deviceDataInterval);
   }
 
-  changeDeviceStatus(status) {
-    this.props.changeDeviceStatus(deviceId, status);
+  changeDeviceStatus(status, socketNum) {
+    this.props.changeDeviceStatus(deviceId, socketNum, status);
   }
 
-  editDeviceName(status) {
-    this.setState({editDeviceName: status});
+  editDeviceName(status, socketNum) {
+    if (socketNum === 1) {
+      this.setState({editDeviceNameSocket1: status});
+    } else if (socketNum === 2) {
+      this.setState({editDeviceNameSocket2: status});
+    }
   }
 
-  changeDeviceName() {
+  changeDeviceName(socketNum) {
     let currentScope = this;
-    this.props.changeDeviceName(deviceId, this.state.photonName, currentScope);
+    if (socketNum === 1) {
+      this.props.changeDeviceName(deviceId, this.state.deviceNameSocket1, socketNum, currentScope);
+    } else if (socketNum === 2) {
+      this.props.changeDeviceName(deviceId, this.state.deviceNameSocket2, socketNum, currentScope);
+    }
   }
 
-  onInputChange(photonName) {
-    this.setState({photonName: photonName});
+  onInputChange(deviceName, socketNum) {
+    if (socketNum === 1) {
+      this.setState({deviceNameSocket1: deviceName});
+    } else if (socketNum === 2) {
+      this.setState({deviceNameSocket2: deviceName});
+    }
   }
 
-  renderDeleteDeviceModal(device) {
+  onKVAReaisHourChange(kVAReaisHour, socketNum) {
+    if (socketNum === 1) {
+      this.setState({kVAReaisHourSocket1: kVAReaisHour});
+    } else if (socketNum === 2) {
+      this.setState({kVAReaisHourSocket2: kVAReaisHour});
+    }
+  }
+
+  handleChangeStart(date, socketNum) {
+    if (socketNum === 1) {
+      this.setState({
+        reportStartDateSocket1: date
+      });
+    } else if (socketNum === 2) {
+      this.setState({
+        reportStartDateSocket2: date
+      });
+    }
+  }
+
+  handleChangeEnd(date, socketNum) {
+    if (socketNum === 1) {
+      this.setState({
+        reportEndDateSocket1: date
+      });
+    } else if (socketNum === 2) {
+      this.setState({
+        reportEndDateSocket2: date
+      });
+    }
+  }
+
+  generateReport(socketNum, startDate, endDate, kVAReaisHour) {
+    this.props.generateReport(deviceId, socketNum, startDate, endDate, kVAReaisHour);
+  }
+
+  renderDeleteDeviceModal(socket, socketNum) {
     return(
-        <div className="modal fade" id="deleteModal" role="dialog">
+        <div className="modal fade" id={"deleteModal"+socketNum} role="dialog">
           <div className="modal-dialog">
           
             <div className="modal-content">
               <div className="modal-header">
                 <button type="button" className="close" data-dismiss="modal">&times;</button>
-                <h4 className="modal-title">You will delete: {device.photonName}</h4>
+                <h4 className="modal-title">You will delete {socket.name}</h4>
               </div>
               <div className="modal-body">
-                <p>Are you sure you want to delete this device?</p>
+                <p>Are you sure you want to delete {socket.name}?</p>
               </div>
               <div className="modal-footer">
-                <button type="button" onClick={() => this.changeDeviceStatus('Deleted')} className="btn btn-danger pull-left" data-dismiss="modal">Yes</button>
+                <button type="button" onClick={() => this.changeDeviceStatus('Deleted', socketNum)} className="btn btn-danger pull-left" data-dismiss="modal">Yes</button>
                 <button type="button" className="btn btn-default" data-dismiss="modal">Get me out of here!</button>
               </div>
             </div>
@@ -90,11 +173,133 @@ class Device extends Component {
         </div>);
   }
 
-  renderDeviceDetails() {
-    const device = this.props.device;
-    const deviceMostRecentData = this.props.deviceMostRecentData ? this.props.deviceMostRecentData : undefined;
-    const pastData = device && device.pastData ? device.pastData : undefined;
-    const loadError = this.props.error;
+  renderGenerateReportModal(socket, socketNum, startDate, endDate, report, kVAReaisHour) {
+    return(
+        <div className="modal fade" id={"reportModal"+socketNum} role="dialog">
+          <div className="modal-dialog">
+          
+            <div className="modal-content">
+              <div className="modal-header">
+                <button type="button" className="close" data-dismiss="modal">&times;</button>
+                <h4 className="modal-title">Report for socket: {socket.name}</h4>
+              </div>
+              <div className="modal-body">
+                Select a date range: <DatePicker
+                  isClearable={true}
+                  selected={startDate}
+                  selectsStart  
+                  startDate={startDate}
+                  endDate={endDate}
+                  onChange={event => this.handleChangeStart(event, socketNum)} />
+                &nbsp;to&nbsp; 
+                <DatePicker
+                  isClearable={true}
+                  selected={endDate}
+                  selectsEnd  
+                  startDate={startDate}
+                  endDate={endDate}
+                  onChange={event => this.handleChangeEnd(event, socketNum)} />
+
+                <br /><br />
+
+                <span>
+                  kVA/h price (R$): <input type="number" onChange={event => this.onKVAReaisHourChange(event.target.value, socketNum)} value={kVAReaisHour}/>
+                </span>
+
+                <br /><br />
+              
+                {report ? 'OK' : 'NOP'}
+              </div>
+
+              <div className="modal-footer">
+                <button type="button" onClick={() => this.generateReport(socketNum, startDate, endDate, kVAReaisHour)} className="btn btn-success pull-left">Generate report</button>
+                <button type="button" className="btn btn-default" data-dismiss="modal">Close</button>
+              </div>
+            </div>
+            
+          </div>
+        </div>);
+  }
+
+  renderSocket(socket, socketNum, editDeviceNameSocket, deviceNameSocket, deviceMostRecentData, pastData, reportStartDate, reportEndDate, report, kVAReaisHour, chart) {
+
+    if (socket.state.status === 'Deleted') {
+      return (<span></span>);
+    }
+
+    return (<div>
+      <span>Name Socket {socketNum}: </span> 
+      {editDeviceNameSocket}
+      {editDeviceNameSocket === false ? 
+        <b>{deviceNameSocket}</b> 
+      :
+        <span>
+          <input type="text" onChange={event => this.onInputChange(event.target.value, socketNum)} value={deviceNameSocket}/>
+        </span>
+      }
+
+      <br /><br />
+
+      <span>Status: </span>{socket && socket.state.status == "Active" ?
+        <i className="fa fa-bolt" style={{fontSize: '20px', color: 'orange'}}></i> :
+        <i className="fa fa-bolt" style={{fontSize: '20px', color: 'black'}}></i> } {socket.state.status} <br /><br />
+
+      {editDeviceNameSocket === false ? 
+        <button type="button" onClick={() => this.editDeviceName(true, socketNum)} className="btn btn-primary pull-left">Edit Device Name</button>
+        :
+        <span>
+          <button type="button" onClick={() => this.changeDeviceName(socketNum)} className="btn btn-primary pull-left" style={{marginRight: '10px'}}>Save</button>
+          <button type="button" onClick={() => this.editDeviceName(false, socketNum)} className="btn btn-default pull-left">Cancel</button>
+        </span>
+      }
+
+      <button type="button" data-toggle="modal" data-target={"#reportModal"+socketNum} className="btn btn-success pull-right">Generate Report</button>
+      
+      <br /><br /><br />
+      
+      {socket && socket.state.status === 'Active' ?
+        <button type="button" onClick={() => this.changeDeviceStatus('Inactive', socketNum)} className="btn btn-warning pull-left">{"Turn Off Device"}</button>
+        :
+        <button type="button" onClick={() => this.changeDeviceStatus('Active', socketNum)} className="btn btn-success pull-left">{"Turn On Device"}</button>
+      }
+
+      <button type="button" data-toggle="modal" data-target={"#deleteModal"+socketNum} className="btn btn-danger pull-right">Delete Device</button>
+
+      <br /><br /><br /><br />
+
+      <RTChart
+          chart={chart}
+          fields={['current', 'tension', 'apparentPower']}
+          data={deviceMostRecentData}
+          initialData={pastData} />
+
+      {this.renderDeleteDeviceModal(socket, socketNum)}
+
+      {this.renderGenerateReportModal(socket, socketNum, reportStartDate, reportEndDate, report, kVAReaisHour)}
+
+    </div>);
+
+  }
+
+  renderSocketDetails(device) {
+
+    const deviceMostRecentData = this.props.deviceMostRecentData ? this.props.deviceMostRecentData : {};
+    const pastData = device && device.pastData ? device.pastData : [];
+
+    const deviceMostRecentDataSocket1 = deviceMostRecentData.socketNum === 1 ? deviceMostRecentData : undefined;
+    const deviceMostRecentDataSocket2 = deviceMostRecentData.socketNum === 2 ? deviceMostRecentData : undefined;
+
+    const pastDataSocket1 = pastData.filter(function(deviceData) {
+      return deviceData.socketNum === 1;
+    });
+
+    const pastDataSocket2 = pastData.filter(function(deviceData) {
+      return deviceData.socketNum === 2;
+    });
+
+    const report = this.props.report ? this.props.report : {};
+    const reportSocket1 = report.socketNum === 1 ? report : undefined;
+    const reportSocket2 = report.socketNum === 2 ? report : undefined;
 
     const chart = {
         data: {
@@ -106,59 +311,53 @@ class Device extends Component {
         }
     };
 
-    if (device) {
-      return(<div>
+    return(<div>
 
-        <span>Name: </span> 
-        {this.state.editDeviceName === false ? 
-          <b>{this.state.photonName}</b> 
-        :
-          <span>
-            <input type="text" onChange={event => this.onInputChange(event.target.value)} value={this.state.photonName} id="deviceName" />
-          </span>
-        }
-        <br /><br />
-        <span>Status: </span>{device.state.status && device.state.status == "Active" ?
-          <i className="fa fa-bolt" style={{fontSize: '20px', color: 'orange'}}></i> :
-          <i className="fa fa-bolt" style={{fontSize: '20px', color: 'black'}}></i> } {device.state.status} <br /><br />
         <span>Internal Id:</span> {device._id} <br /><br />
         <span>Device Id: </span>{device.photonId} <br /><br />
-        <span>Claim Date: </span>{device.claimDate} <br /><br />
-
-        {this.state.editDeviceName === false ? 
-          <button type="button" onClick={() => this.editDeviceName(true)} className="btn btn-primary pull-left">Edit Device Name</button>
-          :
-          <span>
-            <button type="button" onClick={() => this.changeDeviceName()} className="btn btn-primary pull-left" style={{marginRight: '10px'}}>Save</button>
-            <button type="button" onClick={() => this.editDeviceName(false)} className="btn btn-default pull-left">Cancel</button>
-          </span>
-        }
-        <br /><br /><br />
-        
-        {device.state.status && device.state.status === 'Active' ?
-          <button type="button" onClick={() => this.changeDeviceStatus('Inactive')} className="btn btn-warning pull-left">{"Turn Off Device"}</button>
-          :
-          <button type="button" onClick={() => this.changeDeviceStatus('Active')} className="btn btn-success pull-left">{"Turn On Device"}</button>
-        }
-
-        <button type="button" data-toggle="modal" data-target="#deleteModal" className="btn btn-danger pull-right">Delete Device</button>
-
-        <br /><br />
+        <span>Claim Date: </span>{device.claimDate} 
 
         <hr />
 
-        <RTChart
-            chart={chart}
-            fields={['current', 'tension', 'apparentPower']}
-            data={deviceMostRecentData}
-            initialData={pastData} />
+        {this.renderSocket(
+          device.socket1, 
+          1, 
+          this.state.editDeviceNameSocket1, 
+          this.state.deviceNameSocket1,
+          deviceMostRecentDataSocket1,
+          pastDataSocket1,
+          this.state.reportStartDateSocket1,
+          this.state.reportEndDateSocket1,
+          reportSocket1,
+          this.state.kVAReaisHourSocket1,
+          chart
+          )}
 
-        {this.renderDeleteDeviceModal(device)}
+        <hr />       
 
-        
+        {this.renderSocket(
+          device.socket2, 
+          2, 
+          this.state.editDeviceNameSocket2, 
+          this.state.deviceNameSocket2,
+          deviceMostRecentDataSocket2,
+          pastDataSocket2,
+          this.state.reportStartDateSocket2,
+          this.state.reportEndDateSocket2,
+          reportSocket2,
+          this.state.kVAReaisHourSocket2,
+          chart
+          )}
 
       </div>);
+  }
 
+  renderDeviceDetails() {
+    const device = this.props.device;
+    const loadError = this.props.error;
+
+    if (device) {
+      return this.renderSocketDetails(device);
     } else if (loadError) {
       return (<div><span>No device found</span></div>);
     } else {
@@ -191,6 +390,7 @@ function mapStateToProps(state) {
     return {
       device: state.devices.device,
       deviceMostRecentData: state.devices.deviceMostRecentData,
+      report: state.devices.report,
       error: state.devices.error
     };
 }
