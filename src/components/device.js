@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import * as actions from '../actions';
 import RTChart from 'react-rt-chart';
 import TimerMixin from 'react-timer-mixin';
-import DatePicker from 'react-datepicker';
+import DatetimeRangePicker from 'react-bootstrap-datetimerangepicker';
 
 function getParameterByName(name, url) {
     if (!url) url = window.location.href;
@@ -122,32 +122,22 @@ class Device extends Component {
     }
   }
 
-  handleChangeStart(date, socketNum) {
-    if (socketNum === 1) {
-      this.setState({
-        reportStartDateSocket1: date
-      });
-    } else if (socketNum === 2) {
-      this.setState({
-        reportStartDateSocket2: date
-      });
-    }
-  }
-
-  handleChangeEnd(date, socketNum) {
-    if (socketNum === 1) {
-      this.setState({
-        reportEndDateSocket1: date
-      });
-    } else if (socketNum === 2) {
-      this.setState({
-        reportEndDateSocket2: date
-      });
-    }
-  }
-
   generateReport(socketNum, startDate, endDate, kWReaisHour) {
-    this.props.generateReport(deviceId, socketNum, startDate, endDate, kWReaisHour);
+      this.props.generateReport(deviceId, socketNum, startDate, endDate, kWReaisHour); 
+  }
+
+  handleApply(event, picker, socketNum) {
+    if (socketNum === 1) {
+      this.setState({
+        reportStartDateSocket1: picker.startDate,
+        reportEndDateSocket1: picker.endDate
+      });
+    } else if (socketNum === 2) {
+      this.setState({
+        reportStartDateSocket2: picker.startDate,
+        reportEndDateSocket2: picker.endDate
+      });
+    }
   }
 
   renderDeleteDeviceModal(socket, socketNum) {
@@ -174,6 +164,7 @@ class Device extends Component {
   }
 
   renderGenerateReportModal(socket, socketNum, startDate, endDate, report, kWReaisHour) {
+
     return(
         <div className="modal fade" id={"reportModal"+socketNum} role="dialog">
           <div className="modal-dialog">
@@ -184,26 +175,35 @@ class Device extends Component {
                 <h4 className="modal-title">Report for socket: {socket.name}</h4>
               </div>
               <div className="modal-body">
-                Select a date range: <DatePicker
-                  isClearable={true}
-                  selected={startDate}
-                  selectsStart  
-                  startDate={startDate}
-                  endDate={endDate}
-                  onChange={event => this.handleChangeStart(event, socketNum)} />
-                &nbsp;to&nbsp; 
-                <DatePicker
-                  isClearable={true}
-                  selected={endDate}
-                  selectsEnd  
-                  startDate={startDate}
-                  endDate={endDate}
-                  onChange={event => this.handleChangeEnd(event, socketNum)} />
+                Select a date range: 
 
-                <br /><br />
+                <DatetimeRangePicker
+                  timePicker
+                  timePicker24Hour
+                  showDropdowns
+                  timePickerSeconds
+                  startDate={startDate}
+                  endDate={endDate}
+                  onApply={(event, picker) => this.handleApply(event, picker, socketNum)}
+                >
+                  <button type="button" className="btn btn-default">
+                      <i className="fa fa-calendar"/> &nbsp;
+                      <span>
+                      {
+                        (startDate && endDate) ? 
+                        startDate.format('YYYY-MM-DD (HH:mm)') + " to " + endDate.format('YYYY-MM-DD (HH:mm)')
+                        : "Select date"
+                      }
+                      </span> &nbsp;
+                      <i className="fa fa-angle-down"/>
+                  </button>
+                  
+                </DatetimeRangePicker>
+
+                <br />
 
                 <span>
-                  kW/h price (R$): <input type="number" onChange={event => this.onkWReaisHourChange(event.target.value, socketNum)} value={kWReaisHour}/>
+                  kWh price (R$): <input type="number" onChange={event => this.onkWReaisHourChange(event.target.value, socketNum)} value={kWReaisHour}/>
                 </span>
 
                 <br />
@@ -228,7 +228,7 @@ class Device extends Component {
         </div>);
   }
 
-  renderSocket(socket, socketNum, editDeviceNameSocket, deviceNameSocket, deviceMostRecentData, pastData, reportStartDate, reportEndDate, report, kWReaisHour, chart) {
+  renderSocket(socket, socketNum, editDeviceNameSocket, deviceNameSocket, deviceMostRecentData, pastData, startDate, endDate, report, kWReaisHour, chart) {
 
     if (socket.state.status === 'Deleted') {
       return (<span></span>);
@@ -282,7 +282,7 @@ class Device extends Component {
 
       {this.renderDeleteDeviceModal(socket, socketNum)}
 
-      {this.renderGenerateReportModal(socket, socketNum, reportStartDate, reportEndDate, report, kWReaisHour)}
+      {this.renderGenerateReportModal(socket, socketNum, startDate, endDate, report, kWReaisHour)}
 
     </div>);
 
