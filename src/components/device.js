@@ -211,7 +211,7 @@ class Device extends Component {
                 {report ? 
                   <div>
                     <hr />
-                    <p>Consumption in kW: {report.data.consumptionkW}</p> 
+                    <p>Consumption in kWh: {report.data.consumptionkW}</p> 
                     <p>Consumption in Reais: {report.data.consumptionReais}</p> 
                   </div>
                  : <span></span>}
