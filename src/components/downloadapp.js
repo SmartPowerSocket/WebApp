@@ -10,36 +10,25 @@ class DownloadApp extends Component {
                       <br />
                       <div className="panel panel-default">
                           <div className="panel-body" style={{'textAlign': 'center'}}>
-                            <a href="https://www.dropbox.com/s/7zrz0sv9e7wdnyb/win32-ia32.zip?dl=1">
+                            <a href="https://www.dropbox.com/s/k60nmhuovke3jmo/Windows10.zip?dl=1">
                               <button type="button" className="btn btn-default button-marging">
-                                <img src="images/windows.png" width="100px" height="100px" alt="Windows 32 bits app"></img>
-                                <br />Windows 32 bits
+                                <img src="images/windows.png" width="100px" height="100px" alt="Windows 10 x64"></img>
+                                <br />Windows 10<br />64 bits
                               </button>
                             </a>
-                            <a href="https://www.dropbox.com/s/xi054aykf04d4f9/win32-x64.zip?dl=1">
-                              <button type="button" className="btn btn-default button-marging">
-                                <img src="images/windows.png" width="100px" height="100px" alt="Windows 64 bits app"></img>
-                                <br />Windows 64 bits
-                              </button>
-                            </a>
-                            <a href="https://www.dropbox.com/s/53cppm0b3w6ieke/darwin-x64.zip?dl=1">
-                              <button type="button" className="btn btn-default button-marging">
-                                <img src="images/apple.png" width="100px" height="100px" alt="Mac OSX app"></img>
-                                <br />Mac OSX
-                              </button>
-                            </a>
-                            <a href="https://www.dropbox.com/s/no2tenhywb3vtsx/linux-ia32.zip?dl=1">
-                              <button type="button" className="btn btn-default button-marging">
-                                <img src="images/linux.png" width="100px" height="100px" alt="Linux 32 bits app"></img>
-                                <br />Linux 32 bits
-                              </button>
-                            </a>
-                            <a href="https://www.dropbox.com/s/20dqtsz8eugy257/linux-x64.zip?dl=1">
-                              <button type="button" className="btn btn-default">
-                                <img src="images/linux.png" width="100px" height="100px" alt="Linux 64 bits app"></img>
-                                <br />Linux 64 bits
-                              </button>
-                            </a>
+                            
+                              <a href="https://www.dropbox.com/s/t6xu1l1sb53ev79/MacOSX.zip?dl=1">
+                                <button type="button" className="btn btn-default button-marging">
+                                  <img src="images/apple.png" width="100px" height="100px" alt="Mac OSX"></img>
+                                  <br />Mac OSX
+                                </button>
+                              </a>
+                              <hr/>
+                              <span>MacOSX Setup:</span> <br/>
+                              <video width="320" height="240" controls="controls">
+                                <source src="https://www.dropbox.com/s/spugmyxqbx5y2ib/MacOSX-Setup.mov?dl=1" type="video/mp4" />
+                              </video>
+                            
                           </div>
                       </div>
                   </div>
